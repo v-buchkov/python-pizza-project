@@ -1,10 +1,11 @@
 """
 Buchkov Viacheslav, DS Track, Python - Project
 """
-import click
 import random
 from typing import Dict, List
 from functools import wraps
+
+import click
 
 
 class Pizza:
@@ -77,10 +78,7 @@ class Pizza:
         bool
         """
         # If recipes and sizes match fully, then assume to be equal
-        if sorted(self.recipe) == sorted(other.recipe) and self.size == other.size:
-            return True
-        else:
-            return False
+        return sorted(self.recipe) == sorted(other.recipe) and self.size == other.size
 
 
 class Margherita(Pizza):
@@ -190,6 +188,13 @@ def pickup_time() -> float:
     return random.randint(5, 61)
 
 
+def get_available_pizzas():
+    """
+    Prints all available pizzas => all classes that inherit basic Pizza class
+    """
+    return Pizza.__subclasses__()
+
+
 @click.group()
 def cli():
     pass
@@ -209,12 +214,18 @@ def order(pizza: str, delivery: bool) -> None:
         Returns:
             time_spent (float): Time in minutes, spent waiting for self-service pickup
     """
+    pizza_input_name = pizza.capitalize()
+
+    # Check that our restaurant has such pizza in menu
+    available_pizzas = list(get_available_pizzas())
+    assert pizza_input_name in [cls.__name__ for cls in available_pizzas], f'No pizza named {pizza_input_name} exist!'
+
     # Get the correct class by the name from globals in this module
-    ordered_pizza = globals()[pizza.capitalize()]
-    print('\U0001F373' + f'Приготовили за {baking_time(ordered_pizza())} мин!')
+    ordered_pizza = [pizza_class for pizza_class in available_pizzas if pizza_class.__name__ == pizza_input_name][0]
+    print(f'\U0001F373Приготовили за {baking_time(ordered_pizza())} мин!')
     # Prints about the delivery, only if flag is active (nothing for self-service)
     if delivery:
-        print('\U0001F69A' + f'Доставили за {delivery_time()} мин!')
+        print(f'\U0001F69AДоставили за {delivery_time()} мин!')
 
 
 @cli.command()
@@ -222,10 +233,8 @@ def menu() -> None:
     """
     Prints all available pizzas.
     """
-    # All available Pizzas => all classes that inherit basic Pizza class
-    available_pizzas = list(Pizza.__subclasses__())
     # For each such class will print required params
-    for p in available_pizzas:
+    for p in list(get_available_pizzas()):
         # print( - {Pizza name} {marketing icon}: {ingredients})
         print(f'- {p.__name__} {p().icon}: {", ".join(p().recipe)}')
 
@@ -275,7 +284,7 @@ def bake(pizza) -> float:
     return baking_time(pizza)
 
 
-@log('\U0001F69A' + 'Доставили за {} мин!')
+@log('\U0001F69AДоставили за {} мин!')
 def delivery(pizza) -> float:
     """
     Delivers the pizza and returns the time spent for delivering the order.
@@ -289,7 +298,7 @@ def delivery(pizza) -> float:
     return delivery_time()
 
 
-@log('\U0001F3E0' + 'Забрали за {} мин!')
+@log('\U0001F3E0Забрали за {} мин!')
 def pickup(pizza) -> float:
     """
     Sets pizza for self-service pickup and returns the time spent.

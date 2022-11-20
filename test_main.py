@@ -1,8 +1,10 @@
+import random
+
 import pytest
+from click.testing import CliRunner
+
 from main import Pizza, Margherita, Pepperoni, Hawaiian, order, menu, baking_time, delivery_time, \
     pickup_time, bake, delivery, pickup
-from click.testing import CliRunner
-import random
 
 # Fix random for tests
 random.seed(1)
@@ -143,7 +145,7 @@ def test_delivery(capfd):
 
     out, err = capfd.readouterr()
 
-    expected_output = ['\U0001F69A' + 'Доставили', 'мин!\n']
+    expected_output = ['\U0001F69AДоставили', 'мин!\n']
 
     try:
         # Split output to strip from x minutes, produced by random function (to not depend on "seed")
@@ -162,7 +164,7 @@ def test_pickup(capfd):
 
     out, err = capfd.readouterr()
 
-    expected_output = ['\U0001F3E0' + 'Забрали', 'мин!\n']
+    expected_output = ['\U0001F3E0Забрали', 'мин!\n']
 
     try:
         # Split output to strip from x minutes, produced by random function (to not depend on "seed")
@@ -198,7 +200,7 @@ def test_order_basic():
     runner = CliRunner()
     result = runner.invoke(order, ['pepperoni'])
 
-    expected_output = ['\U0001F373' + 'Приготовили', 'мин!\n']
+    expected_output = ['\U0001F373Приготовили', 'мин!\n']
 
     out = result.output
     try:
@@ -217,7 +219,7 @@ def test_order_delivery():
     runner = CliRunner()
     result = runner.invoke(order, ['pepperoni', '--delivery'])
 
-    expected_output = ['\U0001F373' + 'Приготовили', 'мин!', '\U0001F69A' + 'Доставили', 'мин!']
+    expected_output = ['\U0001F373Приготовили', 'мин!', '\U0001F69A' + 'Доставили', 'мин!']
 
     # Inner function for splitting a line
     def split_line(line):
