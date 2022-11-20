@@ -100,7 +100,7 @@ class Margherita(Pizza):
         """
         super().__init__(size)
         # Only tomatoes added
-        self.recipe += ['tomatoes']
+        self.recipe.extend(['tomatoes'])
         self.icon = '\U0001F9C0'
 
 
@@ -123,7 +123,7 @@ class Pepperoni(Pizza):
         """
         super().__init__(size)
         # Only pepperoni added
-        self.recipe += ['pepperoni']
+        self.recipe.extend(['pepperoni'])
         self.icon = '\U0001F355'
 
 
@@ -146,7 +146,7 @@ class Hawaiian(Pizza):
         """
         super().__init__(size)
         # Chicken and pineapples added
-        self.recipe += ['chicken', 'pineapples']
+        self.recipe.extend(['chicken', 'pineapples'])
         self.icon = '\U0001F34D'
 
 
